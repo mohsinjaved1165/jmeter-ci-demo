@@ -32,7 +32,7 @@ jobs:
       - name: Run JMeter Test
         run: |
           # Replace tests/your_test_plan.jmx with your actual .jmx path
-          jmeter -n -t tests/week4_test.jmx -l results.jtl -e -o results-html
+          jmeter -n -t week4_test.jmx -l results.jtl -e -o results-html
 
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
