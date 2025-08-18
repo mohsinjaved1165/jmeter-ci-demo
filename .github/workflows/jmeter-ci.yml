@@ -1,0 +1,41 @@
+name: JMeter CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-jmeter-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Install JMeter (simple)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jmeter
+
+      - name: Find test plan
+        run: |
+          echo "Listing JMX files:"
+          find . -name '*.jmx'
+
+      - name: Run JMeter Test
+        run: |
+          # Replace tests/your_test_plan.jmx with your actual .jmx path
+          jmeter -n -t tests/week4_test.jmx -l results.jtl -e -o results-html
+
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-results
+          path: results-html
