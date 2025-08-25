@@ -10,36 +10,32 @@ jobs:
   run-jmeter-tests:
     runs-on: ubuntu-latest
     env:
-      JMETER_VERSION: '5.5'   # adjust if you use another version
+      JMETER_VERSION: '5.6.3'   # latest stable version
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
 
       - name: Download Apache JMeter
         run: |
-          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-<version>.tgz
-          tar -xzf apache-jmeter-${{ env.JMETER_VERSION }}.tgz
+          echo "Downloading JMeter version $JMETER_VERSION"
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+          tar -xzf apache-jmeter-${JMETER_VERSION}.tgz
 
       - name: Run JMeter Test
         run: |
-          # Clean previous results if any
           rm -rf results-html results.jtl || true
-          
-          # Run your JMeter test (update the path!)
-          ./apache-jmeter-${{ env.JMETER_VERSION }}/bin/jmeter \
+          ./apache-jmeter-${JMETER_VERSION}/bin/jmeter \
             -n -t week4_test.jmx \
             -l results.jtl \
             -e -o results-html
-          
-          echo "JMeter run complete. Checking results..."
-          ls -la results-html || echo "No results found!"
+          ls -la results-html || echo "⚠️ No results found!"
 
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
