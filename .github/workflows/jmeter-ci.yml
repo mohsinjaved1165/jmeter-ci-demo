@@ -9,30 +9,37 @@ on:
 jobs:
   run-jmeter-tests:
     runs-on: ubuntu-latest
+    env:
+      JMETER_VERSION: '5.5'   # adjust if you use another version
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Install JMeter (simple)
+      - name: Download Apache JMeter
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jmeter
-
-      - name: Find test plan
-        run: |
-          echo "Listing JMX files:"
-          find . -name '*.jmx'
+          wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.tgz
+          tar -xzf apache-jmeter-${{ env.JMETER_VERSION }}.tgz
 
       - name: Run JMeter Test
         run: |
-          # Replace tests/your_test_plan.jmx with your actual .jmx path
-          jmeter -n -t week4_test.jmx -l results.jtl -e -o results-html
+          # Clean previous results if any
+          rm -rf results-html results.jtl || true
+          
+          # Run your JMeter test (update the path!)
+          ./apache-jmeter-${{ env.JMETER_VERSION }}/bin/jmeter \
+            -n -t week4_test.jmx \
+            -l results.jtl \
+            -e -o results-html
+          
+          echo "JMeter run complete. Checking results..."
+          ls -la results-html || echo "No results found!"
 
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
