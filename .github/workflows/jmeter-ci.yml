@@ -24,7 +24,7 @@ jobs:
 
       - name: Download Apache JMeter
         run: |
-          wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-${{ env.JMETER_VERSION }}.tgz
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-<version>.tgz
           tar -xzf apache-jmeter-${{ env.JMETER_VERSION }}.tgz
 
       - name: Run JMeter Test
